@@ -65,17 +65,19 @@ display_buffer(void) {
 
 static inline void
 draw_character(char ch, int x, int y, int color) {
-	int i, j, ii, jj, mod;
+	int i, j;
+	//int mod, ii, jj;
 	//assert((ch & 0x80) == 0);
 	char *p = font8x8_basic[(int)ch];
 	for (i = 0; i < 8; i ++) 
 		for (j = 0; j < 8; j ++) 
 			if ((p[i] >> j) & 1)
 			{
-				mod = SIZE_OF_CHARACTER / 8; 
-				for(ii = 0;ii < mod;ii++)
+				//mod = SIZE_OF_CHARACTER / 8; 
+				/*for(ii = 0;ii < mod;ii++)
 					for(jj = 0;jj < mod;jj++)
-						draw_pixel(x + mod*i + ii,y + mod*j + jj,color);
+						draw_pixel(x + mod*i + ii,y + mod*j + jj,color);*/
+				draw_pixel(x + i,y + j,color);
 			}
 }
 

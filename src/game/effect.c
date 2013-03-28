@@ -89,7 +89,7 @@ update_keypress(void) {
 		return TRUE;
 	}*/
 
-	if(query_key(0))
+	/*if(query_key(0))
 	{
 		if(ME.y>=SIZE_OF_CHARACTER)
 			ME.y-=SIZE_OF_CHARACTER;
@@ -117,6 +117,39 @@ update_keypress(void) {
 	{
 		if(ME.x<=SCR_HEIGHT-SIZE_OF_CHARACTER*2)
 			ME.x+=SIZE_OF_CHARACTER;
+		ME.di = 3;
+		release_key(3);
+		return TRUE;
+	}*/
+
+	if(query_key(0))
+	{
+		if(ME.y>=8)
+			ME.y-=8;
+		ME.di = 0;
+		release_key(0);
+		return TRUE;
+	}
+	if(query_key(1))
+	{
+		if(ME.y<=SCR_WIDTH-16)
+			ME.y+=8;
+		ME.di = 1;
+		release_key(1);
+		return TRUE;
+	}
+	if(query_key(2))
+	{
+		if(ME.x>=8)
+			ME.x-=8;
+		ME.di = 2;
+		release_key(2);
+		return TRUE;
+	}
+	if(query_key(3))
+	{
+		if(ME.x<=SCR_HEIGHT-16)
+			ME.x+=8;
 		ME.di = 3;
 		release_key(3);
 		return TRUE;
