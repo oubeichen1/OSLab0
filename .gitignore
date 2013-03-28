@@ -1,5 +1,9 @@
+*.*~
 *.d
 *.o
 *.img
+*.swp
+tags
 /game
 boot/bootblock
+

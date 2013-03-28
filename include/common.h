@@ -5,5 +5,5 @@
 #include "const.h"
 #include "assert.h"
 
-//#define SIZE_OF_CHARACTER 16
+#define SIZE_OF_CHARACTER 16
 #endif
