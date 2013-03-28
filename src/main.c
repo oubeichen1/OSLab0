@@ -1,11 +1,20 @@
+/*=============================================================================
+#     FileName: main.c
+#         Desc: The init function of the game 
+#       Author: oubeichen
+#        Email: oubeichen@gmail.com
+#     HomePage: http://www.oubeichen.com
+#      Version: 0.0.1
+#   LastChange: 2013-03-28 19:58:21
+#      History:
+=============================================================================*/
 #include "game.h"
 #include "irq.h"
 #include "x86/x86.h"
 #include "device/timer.h"
 #include "assert.h"
 
-void
-game_init(void) {
+void game_init(void) {
 	init_timer();
 	init_idt();
 	init_intr();
