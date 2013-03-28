@@ -25,15 +25,15 @@ redraw_screen() {
 	static char buf[2];
 	buf[0] = ME.di+1;
 	buf[1] = 0;
-	draw_string(buf,ME.x,ME.y,15);
+	draw_string(buf,ME.x,ME.y,15,SIZE_OF_CHARACTER);
 	/* 绘制命中数、miss数、最后一次按键扫描码和fps */
 	//draw_string(itoa(last_key_code()), SCR_HEIGHT - 8, 0, 48);
 	hit = itoa(get_hit());
-	draw_string(hit, 0, SCR_WIDTH - strlen(hit) * 8, 10);
+	draw_string(hit, 0, SCR_WIDTH - strlen(hit) * 8, 10,8);
 	//miss = itoa(get_miss());
 	//draw_string(miss, SCR_HEIGHT - 8, SCR_WIDTH - strlen(miss) * 8, 12);
-	draw_string(itoa(get_fps()), 0, 0, 14);
-	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 14);
+	draw_string(itoa(get_fps()), 0, 0, 14,8);
+	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 14,8);
 
 	display_buffer(); /* 绘制缓冲区 */
 }

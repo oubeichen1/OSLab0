@@ -13,6 +13,8 @@ void press_key(int scan_code);
 void release_key(int ch);
 bool query_key(int ch);
 int last_key_code(void);
+/*定义角色大小*/
+#define SIZE_OF_CHARACTER 16
 
 /* 定义fly_t链表 */
 LINKLIST_DEF(fly)

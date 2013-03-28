@@ -22,7 +22,7 @@ blue_screen(const char *file, int line) {
 	append(&p, itoa(line));
 
 	memset(vmem, 1, SCR_SIZE);
-	draw_string(buf, 0, 0, 15);
+	draw_string(buf, 0, 0, 15 ,8);
 	display_buffer();
 }
 

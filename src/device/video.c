@@ -64,7 +64,7 @@ display_buffer(void) {
 }
 
 static inline void
-draw_character(char ch, int x, int y, int color) {
+draw_character(char ch, int x, int y, int color,int size) {
 	int i, j, mod, ii, jj;
 	//assert((ch & 0x80) == 0);
 	char *p = font8x8_basic[(int)ch];
@@ -72,7 +72,7 @@ draw_character(char ch, int x, int y, int color) {
 		for (j = 0; j < 8; j ++) 
 			if ((p[i] >> j) & 1)
 			{
-				mod = SIZE_OF_CHARACTER / 8; 
+				mod = size / 8; 
 				for(ii = 0;ii < mod;ii++)
 					for(jj = 0;jj < mod;jj++)
 						draw_pixel(x + mod*i + ii,y + mod*j + jj,color);
@@ -80,9 +80,9 @@ draw_character(char ch, int x, int y, int color) {
 }
 
 void
-draw_string(const char *str, int x, int y, int color) {
+draw_string(const char *str, int x, int y, int color,int size) {
 	while (*str) {
-		draw_character(*str ++, x, y, color);
+		draw_character(*str ++, x, y, color, size);
 		if (y + 8 >= SCR_WIDTH) {
 			x += 8; y = 0;
 		} else {
