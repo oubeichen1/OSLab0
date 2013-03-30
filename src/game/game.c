@@ -75,6 +75,7 @@ main_loop(void) {
 			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
 				//update_my_pos();
 				//update_enemy_pos();
+				update_mcb_pos();
 			}
 			/* 每隔一定时间需要刷新屏幕。注意到这里实现了“跳帧”的机制：假设
 			 *   HZ = 1000, FPS = 100, now = 10, target = 1000

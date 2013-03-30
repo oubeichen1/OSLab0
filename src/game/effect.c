@@ -6,8 +6,10 @@
 #include "x86/x86.h"
 
 LINKLIST_IMPL(fly, 10000)
+LINKLIST_IMPL(mcb, 10000)
 
 static fly_t head = NULL;
+static mcb_t mcbhead = NULL;
 static int hit = 0, miss = 0;
 
 int
@@ -19,10 +21,13 @@ int
 get_miss(void) {
 	return miss;
 }
-
 fly_t
 characters(void) {
 	return head;
+}
+mcb_t
+mcbullets(void){
+	return mcbhead;
 }
 /* 在屏幕上创建主要角色 */
 void
@@ -66,13 +71,29 @@ update_enemy_pos(void) {
 		it = next;
 	}
 }
+/*主角的子弹移动1单位*/
+void
+update_mcb_pos(void){
+	mcb_t it;
+	for(it = mcbhead;it != NULL;){
+		mcb_t next = it->_next;
+		it->x += it->vx;
+		it->y += it->vy;
+		if (it->x < 0 || it->x + 16 > SCR_HEIGHT || it->y < 0 ||it->y + 16 >SCR_WIDTH) {
+			mcb_remove(it);
+			mcb_free(it);
+			if (it == mcbhead) mcbhead = next; /* 更新链表 */
+		}
+		it = next;
+	}
+}
 
 /* 根据按键移动主角的位置 */
 bool
 update_keypress(void) {
 	//fly_t it, target = NULL;
 	//float min = -100;
-	
+	float bulletvx[4] = {0,0,-1,1},bulletvy[4] = {-1,1,0,0};//四种方向下子弹的速度
 	disable_interrupt();
 	/* 寻找相应键已被按下、最底部且未被击中的字符 
 	for (it = head; it != NULL; it = it->_next) {
@@ -119,6 +140,24 @@ update_keypress(void) {
 			ME.x+=SIZE_OF_CHARACTER;
 		ME.di = 3;
 		release_key(3);
+		return TRUE;
+	}
+	/*按下了空格键，发射子弹*/
+	if(query_key(4))
+	{
+		if (mcbhead == NULL) {
+			mcbhead = mcb_new(); /* 当前没有主角子弹 创建新链表 */
+		} else {
+			mcb_t now = mcb_new();
+			mcb_insert(NULL, mcbhead, now); /* 插入到链表的头部 */
+			mcbhead = now;
+		}
+		/* 字母、初始位置、掉落速度均为随机设定 */
+		mcbhead->x = ME.x;
+		mcbhead->y = ME.y;
+		mcbhead->vx = bulletvx[ME.di];
+		mcbhead->vy = bulletvy[ME.di];
+		release_key(4);
 		return TRUE;
 	}
 

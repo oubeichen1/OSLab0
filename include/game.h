@@ -16,7 +16,7 @@ int last_key_code(void);
 /*定义角色大小*/
 #define SIZE_OF_CHARACTER 16
 
-/* 定义fly_t链表 */
+/* 定义敌人链表 */
 LINKLIST_DEF(fly)
 	float x, y;
 	int di;
@@ -30,6 +30,12 @@ struct mc{
 	int di;//方向 0左1右2上3下
 }ME;
 
+/*定义主要角色的子弹*/
+LINKLIST_DEF(mcb)
+	float x,y;
+	float vx,vy;
+LINKLIST_DEF_FI(mcb)
+
 /* 主循环 */
 void main_loop(void);
 
@@ -38,6 +44,7 @@ void create_main_character(void);
 void create_new_enemy(void);
 void update_enemy_pos(void);
 void update_my_pos(void);
+void update_mcb_pos(void);
 bool update_keypress(void);
 
 int get_hit(void);
@@ -45,6 +52,7 @@ int get_miss(void);
 int get_fps(void);
 void set_fps(int fps);
 fly_t characters(void);
+mcb_t mcbullets(void);
 
 void redraw_screen(void);
 
