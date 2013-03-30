@@ -19,7 +19,11 @@ redraw_screen() {
 	static char buf[2];
 	/* 绘制每个敌方坦克 */
 	for (enemyit = enemies(); enemyit != NULL; enemyit = enemyit->_next) {
-		buf[0] = enemyit->di+1; buf[1] = 0;
+		if(enemyit->dead)
+			buf[0] = 6;//被击毁的样式
+		else
+			buf[0] = enemyit->di+1; 
+		buf[1] = 0;
 		draw_string(buf, enemyit->x, enemyit->y, 14,SIZE_OF_CHARACTER);
 	}
 	/*绘制主角*/

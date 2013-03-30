@@ -54,6 +54,7 @@ create_new_enemy(void) {
 	//head->v = (rand() % 1000 / 1000.0 + 1) / 2.0;
 	enemyhead->di = rand()%4;//初始方向随机，不过马上就会变成朝向主角移动
 	enemyhead->step = 0;//移动和方向的AI统一在update_enemy_pos里设置
+	enemyhead->dead = FALSE;
 	//release_key(head->text); /* 清除过往的按键 */
 }
 
@@ -141,6 +142,7 @@ void
 update_mcb_pos(void){
 	if(cannotshoot)cannotshoot--;//子弹移动了1秒后才能射击下一次。
 	mcb_t it;
+	enemy_t enemyit;
 	for(it = mcbhead;it != NULL;){
 		mcb_t next = it->_next;
 		it->x += it->vx;
@@ -149,6 +151,16 @@ update_mcb_pos(void){
 			mcb_remove(it);
 			mcb_free(it);
 			if (it == mcbhead) mcbhead = next; /* 更新链表 */
+		}
+		for(enemyit = enemyhead;enemyit != NULL;enemyit = enemyit->_next)//判断是否击中敌方坦克
+		{
+			if(it->x == enemyit->x && it->y == enemyit->y)
+			{
+				enemyit->dead = TRUE;
+				mcb_remove(it);
+				mcb_free(it);
+				if(it == mcbhead)mcbhead = next;
+			}
 		}
 		it = next;
 	}
