@@ -71,13 +71,13 @@ main_loop(void) {
 			if (now % (HZ * SECOND_PER_CHARACTER) == 0) {
 				create_new_enemy();
 			}
+			/* 每隔一定时间更新主角的子弹位置 */
+			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
+				update_mcb_pos();
+			}	
 		        /* 敌人每隔一秒移动一次*/
 			if(now % HZ == 0){
 				update_enemy_pos();
-			}	
-			/* 每隔一定时间更新屏幕中的内容 */
-			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
-				update_mcb_pos();
 			}
 			/* 每隔一定时间需要刷新屏幕。注意到这里实现了“跳帧”的机制：假设
 			 *   HZ = 1000, FPS = 100, now = 10, target = 1000
