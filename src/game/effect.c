@@ -11,6 +11,7 @@ LINKLIST_IMPL(mcb, 10000)
 static fly_t head = NULL;
 static mcb_t mcbhead = NULL;
 static int hit = 0, miss = 0;
+static int cannotshoot = 0;//防止射速过快
 
 int
 get_hit(void) {
@@ -74,6 +75,7 @@ update_enemy_pos(void) {
 /*主角的子弹移动1单位*/
 void
 update_mcb_pos(void){
+	if(cannotshoot)cannotshoot--;//子弹移动了1秒后才能射击下一次。
 	mcb_t it;
 	for(it = mcbhead;it != NULL;){
 		mcb_t next = it->_next;
@@ -142,9 +144,10 @@ update_keypress(void) {
 		release_key(3);
 		return TRUE;
 	}
-	/*按下了空格键，发射子弹*/
-	if(query_key(4))
+	/*按下了空格键，发射子16弹*/
+	if(query_key(4)&&cannotshoot == 0)
 	{
+		cannotshoot = 50;
 		if (mcbhead == NULL) {
 			mcbhead = mcb_new(); /* 当前没有主角子弹 创建新链表 */
 		} else {
