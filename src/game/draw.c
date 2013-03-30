@@ -10,27 +10,26 @@
 */
 void
 redraw_screen() {
-	//fly_t it;
+	enemy_t enemyit;
 	mcb_t it;
 	const char *hit;
 	
 	prepare_buffer(); /* 准备缓冲区 */
 
-	/* 绘制每个字符 
-	for (it = characters(); it != NULL; it = it->_next) {
-		static char buf[2];
-		//buf[0] = it->text + 'A'; buf[1] = 0;
-		draw_string(buf, it->x, it->y, 15);
-	}*/
-	/*绘制主角*/
 	static char buf[2];
+	/* 绘制每个敌方坦克 */
+	for (enemyit = enemies(); enemyit != NULL; enemyit = enemyit->_next) {
+		buf[0] = enemyit->di+1; buf[1] = 0;
+		draw_string(buf, enemyit->x, enemyit->y, 14,SIZE_OF_CHARACTER);
+	}
+	/*绘制主角*/
 	buf[0] = ME.di+1;
 	buf[1] = 0;
 	draw_string(buf,ME.x,ME.y,15,SIZE_OF_CHARACTER);
 	/*绘制主角子弹*/
 	for(it = mcbullets();it != NULL;it = it->_next){
 		buf[0] = 5;
-		draw_string(buf,it->x,it->y,15,16);
+		draw_string(buf,it->x,it->y,15,SIZE_OF_CHARACTER);
 	}
 	/* 绘制命中数、miss数、最后一次按键扫描码和fps */
 	//draw_string(itoa(last_key_code()), SCR_HEIGHT - 8, 0, 48);

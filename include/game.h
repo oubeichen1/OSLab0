@@ -17,23 +17,23 @@ int last_key_code(void);
 #define SIZE_OF_CHARACTER 16
 
 /* 定义敌人链表 */
-LINKLIST_DEF(fly)
-	float x, y;
+LINKLIST_DEF(enemy)
+	int x, y;//整个游戏只有整数坐标，便于设计
 	int di;
-	//int text;
-	//float v;
-LINKLIST_DEF_FI(fly)
+	bool dead;//是否死亡
+	int step;//往这个方向还要走多少步
+LINKLIST_DEF_FI(enemy)
 
 /* 定义主要角色 */
 struct mc{
-	float x,y;
+	int x,y;
 	int di;//方向 0左1右2上3下
 }ME;
 
 /*定义主要角色的子弹*/
 LINKLIST_DEF(mcb)
-	float x,y;
-	float vx,vy;
+	int x,y;
+	int vx,vy;
 LINKLIST_DEF_FI(mcb)
 
 /* 主循环 */
@@ -51,7 +51,7 @@ int get_hit(void);
 int get_miss(void);
 int get_fps(void);
 void set_fps(int fps);
-fly_t characters(void);
+enemy_t enemies(void);
 mcb_t mcbullets(void);
 
 void redraw_screen(void);

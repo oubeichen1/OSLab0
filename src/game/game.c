@@ -69,12 +69,14 @@ main_loop(void) {
 		while (now < target) { 
 			/* 每隔一定时间产生一个新的敌人 */
 			if (now % (HZ * SECOND_PER_CHARACTER) == 0) {
-				//create_new_enemy();
-			} 
+				create_new_enemy();
+			}
+		        /* 敌人每隔一秒移动一次*/
+			if(now % HZ == 0){
+				update_enemy_pos();
+			}	
 			/* 每隔一定时间更新屏幕中的内容 */
 			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
-				//update_my_pos();
-				//update_enemy_pos();
 				update_mcb_pos();
 			}
 			/* 每隔一定时间需要刷新屏幕。注意到这里实现了“跳帧”的机制：假设
