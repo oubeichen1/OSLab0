@@ -5,12 +5,17 @@
 #include "device/video.h"
 #include "x86/x86.h"
 
+
+#define MC_SHOOT_SPEED 50
+//主角每经过多少个0.01秒可以射击一次
+#define ENEMY_SHOOT_POSSIBILITY 80
+
 LINKLIST_IMPL(enemy, 10000)
-LINKLIST_IMPL(mcb, 10000)
+LINKLIST_IMPL(bullet, 10000)
 
 static enemy_t enemyhead = NULL;
-static mcb_t mcbhead = NULL;
-static int hit = 0, miss = 0;
+static bullet_t mcbhead = NULL,enemybhead = NULL;
+static int hit = 0, hp = 3;
 static int cannotshoot = 0;//防止射速过快
 const int vx[4] = {0,-1,0,1},vy[4] = {-1,0,1,0};//左上右下四种方向的位移
 
@@ -20,16 +25,20 @@ get_hit(void) {
 }
 
 int
-get_miss(void) {
-	return miss;
+get_hp(void) {
+	return hp;
 }
 enemy_t
 enemies(void) {
 	return enemyhead;
 }
-mcb_t
+bullet_t
 mcbullets(void){
 	return mcbhead;
+}
+bullet_t
+enemybullets(void){
+	return enemybhead;
 }
 /* 在屏幕上创建主要角色 */
 void
@@ -51,13 +60,31 @@ create_new_enemy(void) {
 	/* 敌人的初始位置随机设定 */
 	enemyhead->x = rand()%2?0:SCR_HEIGHT-SIZE_OF_CHARACTER;
 	enemyhead->y = rand()%2?0:SCR_WIDTH-SIZE_OF_CHARACTER;
-	//head->v = (rand() % 1000 / 1000.0 + 1) / 2.0;
 	enemyhead->di = rand()%4;//初始方向随机，不过马上就会变成朝向主角移动
 	enemyhead->step = 0;//移动和方向的AI统一在update_enemy_pos里设置
 	enemyhead->dead = FALSE;
-	//release_key(head->text); /* 清除过往的按键 */
 }
-
+/* 在屏幕上创建新的敌方子弹*/
+void
+create_new_enemyb(void){
+	enemy_t it;
+	for(it = enemyhead;it !=NULL;it = it->_next)//每个敌方发射子弹的概率是
+	{
+		if(rand()%100 >= ENEMY_SHOOT_POSSIBILITY)continue;//如果不射击
+		if(enemybhead == NULL){//射击则在当前位置创建一个速度方向和当前朝向相同的子弹
+			enemybhead = bullet_new();//屏幕上没有敌方子弹
+		}else{
+			bullet_t now = bullet_new();
+			bullet_insert(NULL,enemybhead,now);
+			enemybhead = now;
+		}
+		/*敌方的位置*/
+		enemybhead->x = it->x;
+		enemybhead->y = it->y;
+		enemybhead->vx = vx[it->di];
+		enemybhead->vy = vy[it->di];
+	}
+}
 /* 敌人坦克移动1单位
  * AI是这样设计的：在x或者y方向朝向主角移动。每次要朝一个方向移动随机步数（0～8），然后才能更换方向，否则显得太不自然 */
 void
@@ -130,7 +157,7 @@ update_enemy_pos(void) {
 				cand_direction[numofcand++] = 2;
 				//如果主角和坦克y值相同，则只可能是一条线了
 			assert(numofcand > 0);
-			//assert(cand_direction[0] >= 0);//至少有一个选项，但现在主角可以穿越其他坦克，所以暂时不用这个assert
+			assert(cand_direction[0] >= 0);//至少有一个选项
 			it->di = cand_direction[rand()%numofcand];
 			it->step = rand()%8;
 		}
@@ -141,36 +168,58 @@ update_enemy_pos(void) {
 void
 update_mcb_pos(void){
 	if(cannotshoot)cannotshoot--;//子弹移动了1秒后才能射击下一次。
-	mcb_t it;
+	bullet_t it;
 	enemy_t enemyit;
 	for(it = mcbhead;it != NULL;){
-		mcb_t next = it->_next;
+		bullet_t next = it->_next;
 		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
 		it->y += it->vy;
 		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
-			mcb_remove(it);
-			mcb_free(it);
+			bullet_remove(it);
+			bullet_free(it);
 			if (it == mcbhead) mcbhead = next; /* 更新链表 */
 		}
 		for(enemyit = enemyhead;enemyit != NULL;enemyit = enemyit->_next)//判断是否击中敌方坦克
 		{
-			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)
+			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
 			{
 				enemyit->dead = TRUE;
-				mcb_remove(it);
-				mcb_free(it);
+				bullet_remove(it);
+				bullet_free(it);
 				if(it == mcbhead)mcbhead = next;
 			}
 		}
 		it = next;
 	}
 }
+/* 敌方的子弹移动1个单位*/
+void
+update_enemyb_pos(void){
+	bullet_t it;
+	for(it = enemybhead;it != NULL;){
+		bullet_t next = it->_next;
+		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
+		it->y += it->vy;
+		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
+			bullet_remove(it);
+			bullet_free(it);
+			if (it == enemybhead) enemybhead = next; /* 更新链表 */
+		}
+		if(it->x >= ME.x && it->x < ME.x + SIZE_OF_CHARACTER && it->y >= ME.y && it->y < ME.y + SIZE_OF_CHARACTER)//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
+		{
+			if(hp)
+				hp--;
+			bullet_remove(it);
+			bullet_free(it);
+			if(it == enemybhead)enemybhead = next;
+		}
+		it = next;
+	}
 
+}
 /* 根据按键移动主角的位置 */
 bool
 update_keypress(void) {
-	//fly_t it, target = NULL;
-	//float min = -100;
 	int i;
 	disable_interrupt();
 	for(i = 0;i < 4;i++)//对应不同的方向键
@@ -205,12 +254,12 @@ update_keypress(void) {
 	/*按下了空格键，发射子弹*/
 	if(query_key(4)&&cannotshoot == 0)
 	{
-		cannotshoot = 50;
+		cannotshoot = MC_SHOOT_SPEED;
 		if (mcbhead == NULL) {
-			mcbhead = mcb_new(); /* 当前没有主角子弹 创建新链表 */
+			mcbhead = bullet_new(); /* 当前没有主角子弹 创建新链表 */
 		} else {
-			mcb_t now = mcb_new();
-			mcb_insert(NULL, mcbhead, now); /* 插入到链表的头部 */
+			bullet_t now = bullet_new();
+			bullet_insert(NULL, mcbhead, now); /* 插入到链表的头部 */
 			mcbhead = now;
 		}
 		/* 字母、初始位置、掉落速度均为随机设定 */

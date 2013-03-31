@@ -30,12 +30,11 @@ struct mc{
 	int di;//方向 0左1右2上3下
 }ME;
 
-/*定义主要角色的子弹*/
-LINKLIST_DEF(mcb)
+/*定义主要角色和敌方的的子弹*/
+LINKLIST_DEF(bullet)
 	int x,y;
 	int vx,vy;
-LINKLIST_DEF_FI(mcb)
-
+LINKLIST_DEF_FI(bullet)
 
 /* 主循环 */
 void main_loop(void);
@@ -43,17 +42,20 @@ void main_loop(void);
 /* 游戏逻辑相关 */
 void create_main_character(void);
 void create_new_enemy(void);
+void create_new_enemyb(void);//敌人的子弹用自动生成的方式
 void update_enemy_pos(void);
 void update_my_pos(void);
 void update_mcb_pos(void);
+void update_enemyb_pos(void);
 bool update_keypress(void);
 
-int get_hit(void);
-int get_miss(void);
+int get_hit(void);//击中数
+int get_hp(void);//血量
 int get_fps(void);
 void set_fps(int fps);
 enemy_t enemies(void);
-mcb_t mcbullets(void);
+bullet_t mcbullets(void);
+bullet_t enemybullets(void);
 
 void redraw_screen(void);
 

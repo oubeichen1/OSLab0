@@ -6,7 +6,7 @@
 #define FPS 30
 #define SECOND_PER_CHARACTER 5
 #define UPDATE_PER_SECOND 100
-
+#define ENEMY_SECOND_PER_BULLET 2
 volatile int tick = 0;
 
 void
@@ -74,6 +74,11 @@ main_loop(void) {
 			/* 每隔一定时间更新主角的子弹位置 如果在敌人移动之后才更新就会出现射不中的情况*/
 			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
 				update_mcb_pos();
+				update_enemyb_pos();
+			}
+			/* 每隔一定时间产生一次敌方子弹*/
+			if(now % (HZ * ENEMY_SECOND_PER_BULLET) == 0){
+				create_new_enemyb();
 			}	
 		        /* 敌人每隔一秒移动一次*/
 			if(now % HZ == 0){
