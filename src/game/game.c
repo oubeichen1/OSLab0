@@ -71,7 +71,7 @@ main_loop(void) {
 			if (now % (HZ * SECOND_PER_CHARACTER) == 0) {
 				create_new_enemy();
 			}
-			/* 每隔一定时间更新主角的子弹位置 */
+			/* 每隔一定时间更新主角的子弹位置 如果在敌人移动之后才更新就会出现射不中的情况*/
 			if (now % (HZ / UPDATE_PER_SECOND) == 0) {
 				update_mcb_pos();
 			}	

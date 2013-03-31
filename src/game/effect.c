@@ -12,7 +12,7 @@ static enemy_t enemyhead = NULL;
 static mcb_t mcbhead = NULL;
 static int hit = 0, miss = 0;
 static int cannotshoot = 0;//防止射速过快
-const int vx[4] = {0,-SIZE_OF_CHARACTER,0,SIZE_OF_CHARACTER},vy[4] = {-SIZE_OF_CHARACTER,0,SIZE_OF_CHARACTER,0};//左上右下四种方向的位移
+const int vx[4] = {0,-1,0,1},vy[4] = {-1,0,1,0};//左上右下四种方向的位移
 
 int
 get_hit(void) {
@@ -75,18 +75,18 @@ update_enemy_pos(void) {
 		else if(it->step > 0)//坦克还要在这个方向上移动
 		{
 			it->step--;
-			it->x += vx[it->di]; /* 更新位置 */
-			it->y += vy[it->di];
+			it->x += vx[it->di] * SIZE_OF_CHARACTER; /* 更新位置 */
+			it->y += vy[it->di] * SIZE_OF_CHARACTER;
 			if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 || it->y + SIZE_OF_CHARACTER > SCR_WIDTH)//触及了边界马上更换反方向,简单一点吧; 
 			{
-				it->x -= vx[it->di];
-				it->y -= vy[it->di];
+				it->x -= vx[it->di] * SIZE_OF_CHARACTER;
+				it->y -= vy[it->di] * SIZE_OF_CHARACTER;
 				it->di = (it->di + 2) % 4;//由于方向代码的顺序是左、上、右、下，所以很容易就能换成反方向
 			}
 			else if (it->x == ME.x && it->y == ME.y)//遇到主角不更换方向，当然是要进攻的
 			{
-				it->x -= vx[it->di];
-				it->y -= vy[it->di];
+				it->x -= vx[it->di] * SIZE_OF_CHARACTER;
+				it->y -= vy[it->di] * SIZE_OF_CHARACTER;
 			}
 			else//触及了其他敌方坦克也要马上更换方向，这次是靠近主角的方向
 			{
@@ -97,8 +97,8 @@ update_enemy_pos(void) {
 					int cand_direction[2] = {0,0};//如果主角和坦克在同一条线，则只有一个方向，即主角所在方向，如果不在同一个方向，则x方向和y方向各有一个靠近主角的方向可以选择;
 					if(other != it && other->x == it->x && other->y == it->y)//被其他敌方坦克挡住
 					{
-						it->x -= vx[it->di];
-						it->y -= vy[it->di];
+						it->x -= vx[it->di] * SIZE_OF_CHARACTER;
+						it->y -= vy[it->di] * SIZE_OF_CHARACTER;
 						if(ME.x < it->x)//上边
 							cand_direction[numofcand++] = 1;
 						else if(ME.x > it->x)//下边
@@ -191,12 +191,25 @@ update_keypress(void) {
 	{
 		if(query_key(i))
 		{
-			ME.x += vx[i];
-			ME.y += vy[i];
+			ME.x += vx[i] * SIZE_OF_CHARACTER;
+			ME.y += vy[i] * SIZE_OF_CHARACTER;
 			if(ME.x < 0 || ME.x > SCR_HEIGHT - SIZE_OF_CHARACTER)
-				ME.x -= vx[i];
+				ME.x -= vx[i] * SIZE_OF_CHARACTER;
 			else if(ME.y < 0 || ME.y > SCR_WIDTH - SIZE_OF_CHARACTER)
-				ME.y -= vy[i];
+				ME.y -= vy[i] * SIZE_OF_CHARACTER;
+			else
+			{
+				enemy_t it;
+				for(it = enemyhead;it != NULL;it = it->_next)
+				{
+					if(it->x == ME.x && it->y == ME.y)
+					{
+						ME.x -= vx[i] * SIZE_OF_CHARACTER;
+						ME.y -= vy[i] * SIZE_OF_CHARACTER;
+						break;
+					}
+				}
+			}
 			ME.di = i;
 			release_key(i);
 			return TRUE;
@@ -217,8 +230,8 @@ update_keypress(void) {
 		/* 字母、初始位置、掉落速度均为随机设定 */
 		mcbhead->x = ME.x;
 		mcbhead->y = ME.y;
-		mcbhead->vx = vx[ME.di] / SIZE_OF_CHARACTER;
-		mcbhead->vy = vy[ME.di] / SIZE_OF_CHARACTER;//保持子弹的流畅性，还是一次移动一个单位
+		mcbhead->vx = vx[ME.di];
+		mcbhead->vy = vy[ME.di];//保持子弹的流畅性，还是一次移动一个单位
 		release_key(4);
 		return TRUE;
 	}
