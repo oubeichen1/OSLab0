@@ -44,11 +44,12 @@ redraw_screen() {
 	//draw_string(itoa(last_key_code()), SCR_HEIGHT - 8, 0, 48);
 	hit = itoa(get_hit());
 	draw_string(hit, 0, SCR_WIDTH - strlen(hit) * 8, 10,8);
+	draw_string("HIT",0,SCR_WIDTH - strlen(itoa(get_hit())) * 8 - 28,10,8);
 	hp = itoa(get_hp());
-	draw_string("HP", SCR_HEIGHT - 8, SCR_WIDTH - 32,12,8);
+	draw_string("HP", SCR_HEIGHT - 8, SCR_WIDTH - 28,12,8);
 	draw_string(hp, SCR_HEIGHT - 8, SCR_WIDTH - strlen(hp) * 8, 12,8);
-	draw_string(itoa(get_fps()), 0, 0, 14,8);
-	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 14,8);
+	draw_string(itoa(get_fps()), 0, 0, 9,8);
+	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 9,8);
 
 	display_buffer(); /* 绘制缓冲区 */
 }
@@ -56,6 +57,5 @@ void draw_gameover()
 {
 	prepare_buffer();
 	draw_string("G A M E O V E R !",SCR_HEIGHT/2- 8,SCR_WIDTH/2 - 75,10,16);
-	draw_string("Press SPACE to exit...",SCR_HEIGHT - 8,SCR_WIDTH/2 - 100,10,8);
 	display_buffer();
 }
