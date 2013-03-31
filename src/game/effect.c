@@ -62,7 +62,7 @@ create_new_enemy(void) {
 	enemyhead->y = rand()%2?0:SCR_WIDTH-SIZE_OF_CHARACTER;
 	enemyhead->di = rand()%4;//初始方向随机，不过马上就会变成朝向主角移动
 	enemyhead->step = 0;//移动和方向的AI统一在update_enemy_pos里设置
-	enemyhead->dead = FALSE;
+	enemyhead->hp = rand()%3 + 1;//血量为1-3
 }
 /* 在屏幕上创建新的敌方子弹*/
 void
@@ -79,8 +79,8 @@ create_new_enemyb(void){
 			enemybhead = now;
 		}
 		/*敌方的位置*/
-		enemybhead->x = it->x;
-		enemybhead->y = it->y;
+		enemybhead->x = it->x + vx[it->di] * SIZE_OF_CHARACTER;//避免出现地方坦克走在子弹的前面
+		enemybhead->y = it->y + vy[it->di] * SIZE_OF_CHARACTER;
 		enemybhead->vx = vx[it->di];
 		enemybhead->vy = vy[it->di];
 	}
@@ -92,7 +92,7 @@ update_enemy_pos(void) {
 	enemy_t it,other;
 	for (it = enemyhead; it != NULL; ) {
 		enemy_t next = it->_next;
-		if(it->dead)//坦克已被击毁
+		if(it->hp == 0)//坦克已被击毁
 		{
 			hit++;//击中一架敌方的坦克
 			enemy_remove(it);
@@ -183,7 +183,8 @@ update_mcb_pos(void){
 		{
 			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
 			{
-				enemyit->dead = TRUE;
+				if(enemyit->hp)
+					enemyit->hp--;
 				bullet_remove(it);
 				bullet_free(it);
 				if(it == mcbhead)mcbhead = next;

@@ -19,12 +19,12 @@ redraw_screen() {
 	static char buf[2];
 	/* 绘制每个敌方坦克 */
 	for (enemyit = enemies(); enemyit != NULL; enemyit = enemyit->_next) {
-		if(enemyit->dead)
+		if(enemyit->hp == 0)
 			buf[0] = 6;//被击毁的样式
 		else
 			buf[0] = enemyit->di+1; 
 		buf[1] = 0;
-		draw_string(buf, enemyit->x, enemyit->y, 14,SIZE_OF_CHARACTER);
+		draw_string(buf, enemyit->x, enemyit->y,15 - enemyit->hp,SIZE_OF_CHARACTER);
 	}
 	/*绘制主角*/
 	buf[0] = ME.di+1;
@@ -40,15 +40,19 @@ redraw_screen() {
 		buf[0] = 5;
 		draw_string(buf,it->x,it->y,14,SIZE_OF_CHARACTER);
 	}
-	/* 绘制命中数、hp数、最后一次按键扫描码和fps */
+	/* 绘制命中数、hp数、fps */
 	//draw_string(itoa(last_key_code()), SCR_HEIGHT - 8, 0, 48);
 	hit = itoa(get_hit());
 	draw_string(hit, 0, SCR_WIDTH - strlen(hit) * 8, 10,8);
 	hp = itoa(get_hp());
+	draw_string("HP", SCR_HEIGHT - 8, SCR_WIDTH - 32,12,8);
 	draw_string(hp, SCR_HEIGHT - 8, SCR_WIDTH - strlen(hp) * 8, 12,8);
 	draw_string(itoa(get_fps()), 0, 0, 14,8);
 	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 14,8);
 
 	display_buffer(); /* 绘制缓冲区 */
 }
+void draw_gameover()
+{
 
+}

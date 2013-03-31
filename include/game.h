@@ -20,7 +20,7 @@ int last_key_code(void);
 LINKLIST_DEF(enemy)
 	int x, y;//整个游戏只有整数坐标，便于设计
 	int di;
-	bool dead;//是否死亡
+	int hp;//可以是不同的血量
 	int step;//往这个方向还要走多少步
 LINKLIST_DEF_FI(enemy)
 
@@ -58,7 +58,7 @@ bullet_t mcbullets(void);
 bullet_t enemybullets(void);
 
 void redraw_screen(void);
-
+void draw_gameover(void);
 /* 随机数 */
 int rand(void);
 void srand(int seed);
