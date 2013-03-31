@@ -8,7 +8,7 @@
 
 #define MC_SHOOT_SPEED 50
 //主角每经过多少个0.01秒可以射击一次
-#define ENEMY_SHOOT_POSSIBILITY 80
+#define ENEMY_SHOOT_POSSIBILITY 50
 
 LINKLIST_IMPL(enemy, 10000)
 LINKLIST_IMPL(bullet, 10000)
@@ -79,8 +79,8 @@ create_new_enemyb(void){
 			enemybhead = now;
 		}
 		/*敌方的位置*/
-		enemybhead->x = it->x + vx[it->di] * SIZE_OF_CHARACTER;//避免出现地方坦克走在子弹的前面
-		enemybhead->y = it->y + vy[it->di] * SIZE_OF_CHARACTER;
+		enemybhead->x = it->x + vx[it->di] * (SIZE_OF_CHARACTER - 1);//避免出现敌方坦克走在子弹的前面
+		enemybhead->y = it->y + vy[it->di] * (SIZE_OF_CHARACTER - 1);
 		enemybhead->vx = vx[it->di];
 		enemybhead->vy = vy[it->di];
 	}
@@ -271,8 +271,11 @@ update_keypress(void) {
 		release_key(4);
 		return TRUE;
 	}
-
 	enable_interrupt();
 	return FALSE;
+}
+bool isgameover(void)//判断是否game over
+{
+	return hp == 0;
 }
 

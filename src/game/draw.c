@@ -17,6 +17,16 @@ redraw_screen() {
 	prepare_buffer(); /* 准备缓冲区 */
 
 	static char buf[2];
+	/*绘制主角子弹*/
+	for(it = mcbullets();it != NULL;it = it->_next){
+		buf[0] = 5;
+		draw_string(buf,it->x,it->y,15,SIZE_OF_CHARACTER);
+	}
+	/*绘制敌方子弹*/
+	for(it = enemybullets();it != NULL;it = it->_next){
+		buf[0] = 5;
+		draw_string(buf,it->x,it->y,14,SIZE_OF_CHARACTER);
+	}
 	/* 绘制每个敌方坦克 */
 	for (enemyit = enemies(); enemyit != NULL; enemyit = enemyit->_next) {
 		if(enemyit->hp == 0)
@@ -30,16 +40,6 @@ redraw_screen() {
 	buf[0] = ME.di+1;
 	buf[1] = 0;
 	draw_string(buf,ME.x,ME.y,15,SIZE_OF_CHARACTER);
-	/*绘制主角子弹*/
-	for(it = mcbullets();it != NULL;it = it->_next){
-		buf[0] = 5;
-		draw_string(buf,it->x,it->y,15,SIZE_OF_CHARACTER);
-	}
-	/*绘制敌方子弹*/
-	for(it = enemybullets();it != NULL;it = it->_next){
-		buf[0] = 5;
-		draw_string(buf,it->x,it->y,14,SIZE_OF_CHARACTER);
-	}
 	/* 绘制命中数、hp数、fps */
 	//draw_string(itoa(last_key_code()), SCR_HEIGHT - 8, 0, 48);
 	hit = itoa(get_hit());
@@ -54,5 +54,8 @@ redraw_screen() {
 }
 void draw_gameover()
 {
-
+	prepare_buffer();
+	draw_string("G A M E O V E R !",SCR_HEIGHT/2- 8,SCR_WIDTH/2 - 75,10,16);
+	draw_string("Press SPACE to exit...",SCR_HEIGHT - 8,SCR_WIDTH/2 - 100,10,8);
+	display_buffer();
 }

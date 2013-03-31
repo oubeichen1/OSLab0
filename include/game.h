@@ -48,7 +48,7 @@ void update_my_pos(void);
 void update_mcb_pos(void);
 void update_enemyb_pos(void);
 bool update_keypress(void);
-
+bool isgameover(void);
 int get_hit(void);//击中数
 int get_hp(void);//血量
 int get_fps(void);

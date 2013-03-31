@@ -30,12 +30,7 @@ query_key(int index) {
 	return letter_pressed[index];
 }
 
-/* key_code保存了上一次键盘事件中的扫描码 */
 static volatile int key_code = 0;
-
-int last_key_code(void) {
-	return key_code;
-}
 
 void
 keyboard_event(int code) {

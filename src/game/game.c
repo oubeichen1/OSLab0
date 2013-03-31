@@ -6,7 +6,7 @@
 #define FPS 30
 #define SECOND_PER_CHARACTER 5
 #define UPDATE_PER_SECOND 100
-#define ENEMY_SECOND_PER_BULLET 2
+#define ENEMY_SECOND_PER_BULLET 1
 volatile int tick = 0;
 
 void
@@ -100,7 +100,11 @@ main_loop(void) {
 			}
 			now ++;
 		}
-
+		if(isgameover())
+		{
+			draw_gameover();
+			break;
+		}
 		if (redraw) { /* 当需要重新绘图时重绘 */
 			num_draw ++;
 			redraw_screen();
