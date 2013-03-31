@@ -36,6 +36,7 @@ LINKLIST_DEF(mcb)
 	int vx,vy;
 LINKLIST_DEF_FI(mcb)
 
+
 /* 主循环 */
 void main_loop(void);
 

@@ -145,7 +145,7 @@ update_mcb_pos(void){
 	enemy_t enemyit;
 	for(it = mcbhead;it != NULL;){
 		mcb_t next = it->_next;
-		it->x += it->vx;
+		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
 		it->y += it->vy;
 		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
 			mcb_remove(it);
@@ -154,7 +154,7 @@ update_mcb_pos(void){
 		}
 		for(enemyit = enemyhead;enemyit != NULL;enemyit = enemyit->_next)//判断是否击中敌方坦克
 		{
-			if(it->x == enemyit->x && it->y == enemyit->y)
+			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)
 			{
 				enemyit->dead = TRUE;
 				mcb_remove(it);
@@ -173,20 +173,6 @@ update_keypress(void) {
 	//float min = -100;
 	int i;
 	disable_interrupt();
-	/* 寻找相应键已被按下、最底部且未被击中的字符 
-	for (it = head; it != NULL; it = it->_next) {
-		assert(it->text >= 0 && it->text < 26);
-		if (it->v > 0 && it->x > min && query_key(it->text)) {
-			min = it->x;
-			target = it;
-		}
-	}
-	//如果找到则更新相应数据 
-	if (target != NULL) {
-		release_key(target->text);
-		target->v = -3;  //速度改为向上 
-		return TRUE;
-	}*/
 	for(i = 0;i < 4;i++)//对应不同的方向键
 	{
 		if(query_key(i))
