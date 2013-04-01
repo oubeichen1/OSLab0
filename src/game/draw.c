@@ -14,7 +14,7 @@ redraw_screen() {
 	{
 		prepare_buffer();
 		draw_string("G A M E O V E R !",SCR_HEIGHT/2- 8,SCR_WIDTH/2 - 75,10,16);
-		draw_string("Press SPACE to replay...",SCR_HEIGHT - 8,SCR_WIDTH/2 - 75,10,8);
+		draw_string("Press SPACE to replay...",SCR_HEIGHT - 8,SCR_WIDTH/2 - 90,10,8);
 		display_buffer();
 		return;
 	}
