@@ -20,10 +20,10 @@ game.img: game
 	@cd boot; make
 	cat boot/bootblock game > game.img
 
-game: $(OBJS)
+game: 	$(OBJS)
 	$(LD) $(LDFLAGS) -e game_init -Ttext 0x00100000 -o game $(OBJS)
 
--include $(OBJS:.o=.d)
+-include $(patsubst %.o, %.d, $(OBJS))
 
 # 定义的一些伪目标
 .PHONY: play clean debug

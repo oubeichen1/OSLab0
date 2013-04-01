@@ -32,6 +32,9 @@ query_key(int index) {
 
 static volatile int key_code = 0;
 
+int last_key_code(void){
+	return key_code;
+}
 void
 keyboard_event(int code) {
 	key_code = code;
