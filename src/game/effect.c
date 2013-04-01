@@ -85,6 +85,15 @@ create_new_enemyb(void){
 		/*敌方的位置*/
 		enemybhead->x = it->x + vx[it->di] * (SIZE_OF_CHARACTER - 1);//避免出现敌方坦克走在子弹的前面
 		enemybhead->y = it->y + vy[it->di] * (SIZE_OF_CHARACTER - 1);
+		if(enemybhead->x < 0 || enemybhead->y < 0 || \
+				enemybhead->x > SCR_HEIGHT - SIZE_OF_CHARACTER || enemybhead->y > SCR_WIDTH - SIZE_OF_CHARACTER)
+		{//子弹出现位置到屏幕外面去了,则删除该子弹
+			bullet_t next = enemybhead->_next;
+			bullet_remove(enemybhead);
+			bullet_free(enemybhead);
+			enemybhead = next;
+			continue;
+		}
 		enemybhead->vx = vx[it->di];
 		enemybhead->vy = vy[it->di];
 	}
