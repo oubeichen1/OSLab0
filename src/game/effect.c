@@ -57,9 +57,13 @@ create_new_enemy(void) {
 		enemy_insert(NULL, enemyhead, now); /* 插入到链表的头部 */
 		enemyhead = now;
 	}
-	/* 敌人的初始位置随机设定 */
-	enemyhead->x = rand()%2?0:SCR_HEIGHT-SIZE_OF_CHARACTER;
-	enemyhead->y = rand()%2?0:SCR_WIDTH-SIZE_OF_CHARACTER;
+	/* 敌人的初始位置随机设定 而且不能和主角在同一个位置*/
+	while(TRUE)
+	{
+		enemyhead->x = rand()%2?0:SCR_HEIGHT-SIZE_OF_CHARACTER;
+		enemyhead->y = rand()%2?0:SCR_WIDTH-SIZE_OF_CHARACTER;
+		if(enemyhead->x != ME.x || enemyhead->y != ME.y)break;//敌人产生的位置被主角占据了就一直重新生成。
+	}
 	enemyhead->di = rand()%4;//初始方向随机，不过马上就会变成朝向主角移动
 	enemyhead->step = 0;//移动和方向的AI统一在update_enemy_pos里设置
 	enemyhead->hp = rand()%3 + 1;//血量为1-3
@@ -104,11 +108,13 @@ update_enemy_pos(void) {
 			it->step--;
 			it->x += vx[it->di] * SIZE_OF_CHARACTER; /* 更新位置 */
 			it->y += vy[it->di] * SIZE_OF_CHARACTER;
-			if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 || it->y + SIZE_OF_CHARACTER > SCR_WIDTH)//触及了边界马上更换反方向,简单一点吧; 
+			if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || \
+				       	it->y < 0 || it->y + SIZE_OF_CHARACTER > SCR_WIDTH)//触及了边界马上更换反方向,简单一点吧; 
 			{
 				it->x -= vx[it->di] * SIZE_OF_CHARACTER;
 				it->y -= vy[it->di] * SIZE_OF_CHARACTER;
-				it->di = (it->di + 2) % 4;//由于方向代码的顺序是左、上、右、下，所以很容易就能换成反方向
+				it->di = (it->di + 2) % 4;//由于方向代码的顺序是左、上、右、下
+				//所以很容易就能换成反方向
 			}
 			else if (it->x == ME.x && it->y == ME.y)//遇到主角不更换方向，当然是要进攻的
 			{
@@ -121,7 +127,9 @@ update_enemy_pos(void) {
 				{
 					//将可选方向准备好，然后一次性随机选择
 					int numofcand = 0;//备选的方向个数
-					int cand_direction[2] = {0,0};//如果主角和坦克在同一条线，则只有一个方向，即主角所在方向，如果不在同一个方向，则x方向和y方向各有一个靠近主角的方向可以选择;
+					int cand_direction[2] = {0,0};
+					//如果主角和坦克在同一条线，则只有一个方向，即主角所在方向。
+					//如果不在同一个方向，则x方向和y方向各有一个靠近主角的方向可以选择;
 					if(other != it && other->x == it->x && other->y == it->y)//被其他敌方坦克挡住
 					{
 						it->x -= vx[it->di] * SIZE_OF_CHARACTER;
@@ -145,7 +153,8 @@ update_enemy_pos(void) {
 		else//坦克已经移动了相应步数，应该要更换方向了;
 		{
 			int numofcand = 0;//备选的方向个数
-			int cand_direction[2] = {-1,-1};//如果主角和坦克在同一条线，则只有一个方向，即主角所在方向，如果不在同一个方向，则x方向和y方向各有一个靠近主角的方向可以选择;
+			int cand_direction[2] = {-1,-1};//如果主角和坦克在同一条线，则只有一个方向，即主角所在方向
+			//如果不在同一个方向，则x方向和y方向各有一个靠近主角的方向可以选择;
 			if(ME.x < it->x)//上边
 				cand_direction[numofcand++] = 1;
 			else if(ME.x > it->x)//下边
@@ -172,16 +181,19 @@ update_mcb_pos(void){
 	enemy_t enemyit;
 	for(it = mcbhead;it != NULL;){
 		bullet_t next = it->_next;
-		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
-		it->y += it->vy;
-		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
+		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || \
+			       	it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
 			bullet_remove(it);
 			bullet_free(it);
 			if (it == mcbhead) mcbhead = next; /* 更新链表 */
 		}
+		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
+		it->y += it->vy;
 		for(enemyit = enemyhead;enemyit != NULL;enemyit = enemyit->_next)//判断是否击中敌方坦克
 		{
-			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
+			if(it->x >= enemyit->x && it->x < enemyit->x + SIZE_OF_CHARACTER && \
+				       	it->y >= enemyit->y && it->y < enemyit->y + SIZE_OF_CHARACTER)
+				//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
 			{
 				if(enemyit->hp)
 					enemyit->hp--;
@@ -199,14 +211,17 @@ update_enemyb_pos(void){
 	bullet_t it;
 	for(it = enemybhead;it != NULL;){
 		bullet_t next = it->_next;
-		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
-		it->y += it->vy;
-		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
+		if (it->x < 0 || it->x + SIZE_OF_CHARACTER > SCR_HEIGHT || \
+			       	it->y < 0 ||it->y + SIZE_OF_CHARACTER > SCR_WIDTH) {
 			bullet_remove(it);
 			bullet_free(it);
 			if (it == enemybhead) enemybhead = next; /* 更新链表 */
 		}
-		if(it->x >= ME.x && it->x < ME.x + SIZE_OF_CHARACTER && it->y >= ME.y && it->y < ME.y + SIZE_OF_CHARACTER)//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
+		it->x += it->vx;	//由于更新子弹位置的次数比更新单位的次数多得多，所以需要省略计算次数
+		it->y += it->vy;
+		if(it->x >= ME.x && it->x < ME.x + SIZE_OF_CHARACTER && \
+				it->y >= ME.y && it->y < ME.y + SIZE_OF_CHARACTER)
+			//这样判断是为了防止移动子弹之后和坦克的坐标不一样，但还在坦克范围内了
 		{
 			if(hp)
 				hp--;

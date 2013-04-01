@@ -20,7 +20,7 @@ game.img: game
 	@cd boot; make
 	cat boot/bootblock game > game.img
 
-game: 	$(OBJS)
+game: $(OBJS)
 	$(LD) $(LDFLAGS) -e game_init -Ttext 0x00100000 -o game $(OBJS)
 
 -include $(patsubst %.o, %.d, $(OBJS))
