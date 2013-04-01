@@ -23,4 +23,5 @@ void game_init(void) {
 
 	enable_interrupt();
 	main_loop();
+	assert(0);//由于整个游戏是个死循环，所以永远不会返回这儿
 }
