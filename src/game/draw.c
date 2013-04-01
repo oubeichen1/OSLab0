@@ -10,6 +10,15 @@
 */
 void
 redraw_screen() {
+	if(isgameover())//gameover则显示gameover画面
+	{
+		prepare_buffer();
+		draw_string("G A M E O V E R !",SCR_HEIGHT/2- 8,SCR_WIDTH/2 - 75,10,16);
+		draw_string("Press SPACE to replay...",SCR_HEIGHT - 8,SCR_WIDTH/2 - 75,10,8);
+		display_buffer();
+		return;
+	}
+
 	enemy_t enemyit;
 	bullet_t it;
 	const char *hit,*hp;
@@ -52,10 +61,4 @@ redraw_screen() {
 	draw_string("FPS", 0, strlen(itoa(get_fps())) * 8, 9,8);
 
 	display_buffer(); /* 绘制缓冲区 */
-}
-void draw_gameover()
-{
-	prepare_buffer();
-	draw_string("G A M E O V E R !",SCR_HEIGHT/2- 8,SCR_WIDTH/2 - 75,10,16);
-	display_buffer();
 }

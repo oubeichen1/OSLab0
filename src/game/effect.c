@@ -45,7 +45,7 @@ void
 create_main_character(void){
 	ME.x = SCR_HEIGHT / 2;
 	ME.y = SCR_WIDTH / 2;
-	ME.di = 2;
+	ME.di = 3;
 }
 /* 在屏幕上创建一个新的敌人 */
 void
@@ -252,24 +252,56 @@ update_keypress(void) {
 		}
 	}
 
-	/*按下了空格键，发射子弹*/
+	/*按下了空格键，发射子弹或者重新开始*/
 	if(query_key(4)&&cannotshoot == 0)
 	{
-		cannotshoot = MC_SHOOT_SPEED;
-		if (mcbhead == NULL) {
-			mcbhead = bullet_new(); /* 当前没有主角子弹 创建新链表 */
-		} else {
-			bullet_t now = bullet_new();
-			bullet_insert(NULL, mcbhead, now); /* 插入到链表的头部 */
-			mcbhead = now;
+		if(hp)
+		{
+			cannotshoot = MC_SHOOT_SPEED;
+			if (mcbhead == NULL) {
+				mcbhead = bullet_new(); /* 当前没有主角子弹 创建新链表 */
+			} else {
+				bullet_t now = bullet_new();
+				bullet_insert(NULL, mcbhead, now); /* 插入到链表的头部 */
+				mcbhead = now;
+			}
+			/* 字母、初始位置、掉落速度均为随机设定 */
+			mcbhead->x = ME.x;
+			mcbhead->y = ME.y;
+			mcbhead->vx = vx[ME.di];
+			mcbhead->vy = vy[ME.di];//保持子弹的流畅性，还是一次移动一个单位
+			release_key(4);
+			return TRUE;
 		}
-		/* 字母、初始位置、掉落速度均为随机设定 */
-		mcbhead->x = ME.x;
-		mcbhead->y = ME.y;
-		mcbhead->vx = vx[ME.di];
-		mcbhead->vy = vy[ME.di];//保持子弹的流畅性，还是一次移动一个单位
-		release_key(4);
-		return TRUE;
+		else//游戏结束界面，重置游戏，清除所有链表
+		{
+			hp = 3;
+			hit = 0;
+			ME.x = SCR_HEIGHT / 2;
+			ME.y = SCR_WIDTH / 2;
+			ME.di = 3;
+			for(;enemyhead != NULL;)
+			{
+				enemy_t next = enemyhead->_next;
+				enemy_remove(enemyhead);
+				enemy_free(enemyhead);
+				enemyhead = next;
+			}
+			for(;enemybhead != NULL;)
+			{
+				bullet_t next = enemybhead->_next;
+			       	bullet_remove(enemybhead);
+				bullet_free(enemybhead);
+				enemybhead = next;
+			}
+			for(;mcbhead!=NULL;)
+			{
+				bullet_t next = mcbhead->_next;
+				bullet_remove(mcbhead);
+				bullet_free(mcbhead);
+				mcbhead = next;
+			}
+		}
 	}
 	enable_interrupt();
 	return FALSE;

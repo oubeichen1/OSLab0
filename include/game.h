@@ -58,7 +58,6 @@ bullet_t mcbullets(void);
 bullet_t enemybullets(void);
 
 void redraw_screen(void);
-void draw_gameover(void);
 /* 随机数 */
 int rand(void);
 void srand(int seed);

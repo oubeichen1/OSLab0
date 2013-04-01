@@ -100,11 +100,6 @@ main_loop(void) {
 			}
 			now ++;
 		}
-		if(isgameover())
-		{
-			draw_gameover();
-			break;
-		}
 		if (redraw) { /* 当需要重新绘图时重绘 */
 			num_draw ++;
 			redraw_screen();
